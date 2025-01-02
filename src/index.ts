@@ -7,6 +7,9 @@ export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		let url = new URL(request.url);
 		let params = url.searchParams;
+		
+		if(isNaN(Number(params.get("id")))) return new Response("Please do not insert a string !", {status: 400})
+		
 		const CORSHeaders = new Headers({
 			"Content-Type": "application/json",
 			"Access-Control-Allow-Headers": "*",
@@ -61,6 +64,7 @@ export default {
 		    for (let i = 1; i < 11; i++) {
 				if(isNaN(Number(params.get(`p${i}`)))) return new Response("do not try to insert strings.")
 				if(params.get(`p${1}`) === null) return new Response("please put ALL the parameters specified: id p1 p2 p3 p4 p5 p6 p7 p8 p9 p10")
+				if(Number(params.get(`p${i}`)) > 10 || Number(params.get(`p${i}`)) < 0) return new Response("you will not input values greaterr than 10 or less than 0 !!!!!!")
 			}
 		    let submission = await env.DB.prepare("INSERT INTO DiffSub (id, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)").bind(
 		      params.get("id"), params.get("p1"), params.get("p2"), params.get("p3"), params.get("p4"), params.get("p5"), params.get("p6"), params.get("p7"), params.get("p8"), params.get("p9"), params.get("p10")
